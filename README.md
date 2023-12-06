@@ -1,6 +1,6 @@
 # Duolingo Torture - Invasive Duolingo Reminders
 
-
+_Note: this project is still in active development and may not work as expected._
 
 To install:
 
