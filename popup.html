@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>Duolingo Torture</title>
+
+        <link rel="stylesheet" href="assets/css/styles.css">
+      
+    </head>
+    
+    <body> <div align="center">
+
+        <br><br><br><br><br><br><br>
+
+        <img src="assets/images/owl-transparent.webp" width="200px">
+
+        <hr>
+
+        <div id="not-practiced" style="display: block">
+        
+            <p class="title">Time to practice?</p>
+            <p>Duo's losing patience.</p>
+    
+            <br><br>
+    
+            <a id="duolingo-link" href="#">START LESSON</a>
+            <p style="display: inline;">&nbsp;&nbsp;</p>
+            <a id="cancel-link" href="#">NOT NOW</a>
+
+        </div>
+
+        <div id="not-practiced-stage-3" style="display: none">
+        
+            <p class="title">Practice.</p>
+            <br><br>
+            <a id="duolingo-link-stage-3" href="#">START LESSON</a>
+            
+        </div>
+
+        <div id="practiced" style="display: none">
+        
+            <p class="title">Great job today!</p>
+            <p>Duo is pleased, for now.</p>
+    
+            <br><br>
+    
+            <a id="complete-close-link" href="#">CLOSE</a>
+
+        </div>
+
+        <div id="error" style="display: none">
+        
+            <p class="title" >An error occured.</p>
+            <p>Duo pulled out some wires again...</p>
+    
+            <br><br>
+            
+            <a id="error-close-link" href="#">CLOSE</a>
+
+        </div>
+
+    </div> </body>
+
+    <script src="assets/js/popup.js"></script>
+    
+</html>
