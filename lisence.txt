@@ -1,5 +1,5 @@
 
-############### DUOLINGO TORTURE ###############
+DUOLINGO TORTURE
 
 Copyright 2023 Josiah Bergen
 

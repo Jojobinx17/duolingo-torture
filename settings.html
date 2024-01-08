@@ -1,136 +1,204 @@
-<!DOCTYPE html>
-
 
 <!--
 
-TODO:
-    - Intensity modes in the settings menu
+    TODO:
     - Intensity lock option, locks your settings for x days
+    - Costomize practice notifications with the users' current language that they are learning
+    
+    - Difficulty levels -
+    
+    Easy: 
+    - Stage 1, but only after 1:00pm or after 3 hours of usage
+    
+    Medium: 
+    - Stage 1 all day, stage 2 after 1:00pm
+    - Forces stage 2 two hours after using the computer for the first time that day
+    
+    Hard:
+    - Stage 1 at the beginning of the day, stage 2 after 10:00am, stage after 1:00pm
+    - Forces stage 2 after 1 hour of using the computer
+    - Forces stage 3 after 2 hours of using the computer
+    
+    Extreme:
+    - Stage 3 all day, no matter what.
+    - Automatically locks your settings
 
+
+    This is one of my biggest solo projects, at 1558 total lines of code.
+    I hope you enjoy using it as much as I enjoyed developing it!
+    - Josiah
+    
 -->
 
+<head>
 
-<html>
+    <title>Duolingo Torture - Settings</title>
 
-    <head>
+    <link rel="stylesheet" href="assets/css/styles.css">
 
-        <title>Duolingo Torture - Settings</title>
+</head>
 
-        <link rel="stylesheet" href="assets/css/styles.css">
-      
-    </head>
+
+<body> <div align="center">
+
+    <p style="font-size: 25px; display: none" id="welcome-section">
+
+        <br>
+
+        Welcome! Please enter the required information below.
+        <br><br>
+
+        This extension <a style="color: #ee5555; font-size: 25px">WILL NOT WORK</a> if this is not filled out properly. 
+        <br>
+
+    </p>
+
+    <span id="title">
+
+        <p class="title">Extension Settings</p>
+        <br style="line-height: .2">
+        <hr>
+
+    </span>
+
+    <br><br><br>
+
+    <p style="font-size: 25px">Duolingo username: </p>
+
+    <br>
+
+    <input type="text" id="username-input">
+
+    &nbsp; &nbsp;
+
+    <a id="save-username-button" class="submit" href="#submit">SUBMIT</a>
+
+    <br><br>
+
+    <p id="status" style="display: none">
+
+        Success! 
+        <a id="close-button" href="#close">  Close this page?</a>
+
+    </p>
+
+    <p id="current-username" class="secondary-text" style="display: block;">Current username: undefined</p>
+
+    <br><br><br><br>
+
+    <p style="font-size: 25px; display: block;" id="diff-title">Difficulty level:</p> <br>
+
+    <div id="diff-buttons" style="display: block;">
+
+        <button id="diff-easy-button" class="">Easy</button>
+        <button id="diff-normal-button" class="">Normal</button>
+        <button id="diff-hard-button" class="">Hard</button>
+        <button id="diff-duo-button" class="">Torture</button>
+
+    </div>
+
+    <br>
+
+    <p class="secondary-text" id="difficulty-flavour-text"></p>
+
+    <div id="conformation-duo-buttons" style="display: none;">
+
+        <br>
+
+        <a href="#submit" id="accept-duo-button" style="font-size: 20px;">
+            CONTINUE</a> 
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <a href="#submit" id="deny-duo-button" style="font-size: 20px;">
+            CANCEL</a>
+
+
+    </div>
+
+
+    <br><br><br><br>
+
+    <small>
+        Made by Jojobinx17. Check out this project on <a class="small-link" href="https://github.com/Jojobinx17/duolingo-torture">GitHub</a>!
+
+        <br><br>
+
+        <a class="small-link" id="help-button" target="_blank" href="mailto:help.jojobinx17@gmail.com">Help</a>
+
+        <!--  Alternate link (gmail only)
+        <a class="small-link" id="help-button" target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=help.jojobinx@gmail.com&su=&body=What do need help with?&tf=cm">Help</a>
+        -->
+        
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+        <a class="small-link" id="show-debug-button" href="#debug">Debug options</a>
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+        <a class="small-link" style="color: #ee5555" id="reset-data-button" href="#reset">Reset all data</a
+                                                                        
+
+    </small>
+
+    <!-- DEBUG -->
+
+    <div id="debug" style="display: none">
+
+        <br><br><br><br><br>
+
+        <p class="title">Debug Options</p>
+        <br>
+        <hr>
+
+        <br><br><br><br>
+
+        Set difficulty (unrestricted):
+        <input type="number" id="d-diff-input" value="0"> &nbsp; &nbsp;
+        <a id="d-edit-diff-button" class="submit" href="#submit">SUBMIT</a> &nbsp;&nbsp;&nbsp;
+        <a id="d-edit-diff-reload-button" class="submit" href="#submit">RELOAD</a><br><br>
+        <p id="d-edit-diff-data">-</p>
+         
+        <br><br><br>
+
+        <button id="ignore-diff-button">Toggle difficulty</button><br><br>
+        <p id="ignore-diff-data">-</p>
+
+        <br><br><br>
+        
+        Set stage level:
+        <input type="number" id="stage-input" value="0"> &nbsp; &nbsp;
+        <a id="edit-stage-button" class="submit" href="#submit">SUBMIT</a><br><br>
+        <p id="set-stage-data">-</p>
+
+        <br><br><br>
+        
+        <button id="ignore-time-button">Toggle time</button><br><br>
+        <p id="ignore-time-data">-</p>
+
+        <br><br><br>
+
+        Set time of day:
+        <input type="time" id="set-time-input" value=""> &nbsp; &nbsp;
+        <a id="set-time-button" class="submit" href="#submit">SUBMIT</a><br><br>
+        <p id="set-time-data">-</p>
+
+        <br><br><br>
+
+        Set time of first login:
+        <input type="time" id="set-time-2-input" value=""> &nbsp; &nbsp;
+        <a id="set-time-2-button" class="submit" href="#submit">SUBMIT</a><br><br>
+        <p id="set-time-2-data">-</p>
+
+        <br><br><br>
+        
+        Set time of last popup:
+        <input type="time" id="set-time-3-input"> &nbsp; &nbsp;
+        <a id="set-time-3-button" class="submit" href="#submit">SUBMIT</a><br><br>
+        <p id="set-time-3-data">-</p>
+
+        <br><br><br>
+
+    </div>
     
-    <body> <div align="center">
-
-        <p style="font-size: 25px; display: none" id="welcome">
-
-            <br>
-
-            Welcome! Please input your Duolingo username into the box below.
-            <br><br>
-                        
-            This extension <a style="color: #ee5555; font-size: 25px">WILL NOT WORK</a> if this is not filled out properly. 
-            <br>
-            
-        </p>
-
-        <span id="title">
-            
-            <p class="title">Extension Settings</p>
-            <br>
-            <hr>
-
-        </span>
-
-        <br><br><br><br>
-        
-        <p style="font-size: 25px">Duolingo Username: </p>
-
-        <br><br>
-        
-        <input type="text" id="username-input"/>
-
-        &nbsp; &nbsp;
-        
-        <a id="save-username-button" class="submit" href="#submit">SUBMIT</a>
-
-        <br><br>
-
-        <p id="status" style="display: none">
-            
-            Success! 
-            <a id="close-button" href="#close">  Close this page?</a>
-            
-        </p>
-
-        <p id="current-username">            
-        </p>
-
-        <br><br><br><br>
-
-        <p>Set difficulty level (0: dormant, 3: full throttle) &nbsp;&nbsp;&nbsp;<a style="color: gray">*beta only feature</a></p> <br>
-        <input type="number" id="difficulty-input" value="0"/> &nbsp; &nbsp;
-        <a id="edit-difficulty-button" class="submit" href="#submit">SUBMIT</a>
-        <p id="set-difficulty-response"></p>
-
-        <br><br>
-
-        <small>
-            Made by Jojobinx17. Check out this project's <a class="small-link" href="https://github.com/Jojobinx17/duolingo-torture">GitHub</a>!
-
-            <br>
-            <a class="small-link" id="show-debug-button" href="#debug">Debug options</a>
-            
-        </small>
-                
-        <!-- DEBUG -->
-        
-        <div id="debug" style="display: none">
-
-            <br><br><br><br><br>
-
-            <p class="title">Debug Options</p>
-            <br>
-            <hr>
-
-            <br><br><br><br>
-
-            <!-- Edit stage -->
-            <p>Set stage level:</p> <br>
-            <input type="number" id="stage-input" value="0"/> &nbsp; &nbsp;
-            <a id="edit-stage-button" class="submit" href="#submit">SUBMIT</a>
-            <p id="set-stage-response">-</p>
-
-            <br><br><br>
-
-            <!-- Check stage level -->
-            <a id="check-stage-button" class="submit" href="#submit">CHECK STAGE LEVEL</a>
-            <p id="check-stage-response">-</p>
-
-            <br><br><br><br>
-            
-            <!-- Reset timer -->
-            <a id="reset-time-button" class="submit" href="#submit">RESET TIMER</a>
-            <p id="reset-time-response">-</p>
-
-            <br><br><br>
-
-            <!-- Check timer -->
-            <a id="check-time-button" class="submit" href="#submit">CHECK TIMER</a>
-            <p id="check-time-response">-</p>
-
-            <br><br><br>
-
-            <br><br><br>
-
-        </div>
-
-
-    </div> </body>
-
     <script src="assets/js/settings.js"></script>
-    
-</html>
 
-
+</div> </body>
 

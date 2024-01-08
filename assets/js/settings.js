@@ -1,4 +1,12 @@
+
+
+// -------------------------- USERNAME FUNCTIONS --------------------------
+
+
+let currentlySelectedDifficulty = 1;
 let myUsername = "";
+let savedUsername = "";
+let savedData = {};
 
 document.getElementById("save-username-button").addEventListener('click', () => { 
 
@@ -13,7 +21,7 @@ document.getElementById("save-username-button").addEventListener('click', () => 
             
         } else {
 
-            if(myUsername != inputValue) {
+            if(myUsername != inputValue && savedUsername != inputValue) {
                 
                 document.getElementById("status").style.display = "none";
                 let usernameSuccess = await checkUsername(inputValue);
@@ -28,9 +36,14 @@ document.getElementById("save-username-button").addEventListener('click', () => 
     async function checkUsername(usernameToCheck) {
 
         fetch("https://www.duolingo.com/api/1/users/show?username=" + usernameToCheck)
-            .then(response => {                
+            .then(response => {
                 if (response.ok) {
-                    return "success"
+
+                    response.json().then(function(result){
+                        console.log(result.languages);
+                        return "success";
+                    });
+                                        
                 } else if(response.status === 404) {
                     return Promise.reject('404')
                 } else {
@@ -56,33 +69,13 @@ document.getElementById("close-button").addEventListener('click', () => {
     window.close();
 });
 
-document.getElementById("edit-difficulty-button").addEventListener('click', () => { 
-
-    let inputValue = Math.round(document.getElementById("difficulty-input").value);
-    let responseElement = document.getElementById("set-difficulty-response");
-
-    if(inputValue < 4 && inputValue > -1) {
-
-        chrome.storage.local.set({ "state": "stage" + inputValue }).then(() => {
-            console.log("State set successfully.");
-            responseElement.innerHTML = "Difficulty set to " + inputValue + "!";
-        });
-
-    } else {
-        responseElement.innerHTML = "Please enter a value from 0-3.";
-    }
-
-});
-
-chrome.storage.local.get(["state"]).then(function(response) {
-   document.getElementById("set-difficulty-response").innerHTML = "Difficulty is currently " + response.state.substring(5) + ".";
-})
-
-
 async function getStoredUsername() {
 
     const storedUsername = await chrome.storage.local.get(["username"]);
     let element = document.getElementById("current-username");
+
+    myUsername = storedUsername.username;
+    savedUsername = storedUsername.username;
     
     element.style.display = "block";
     element.innerHTML = "Current username: " + storedUsername.username;
@@ -91,91 +84,349 @@ async function getStoredUsername() {
         element.innerHTML = "Please fill in a valid username.";
         document.getElementById("status").style.display = "none";
     }
+}
+
+
+
+
+// -------------------------- DIFFICULTY BUTTONS --------------------------
+
+function getDifficulty(level) {
+    chrome.storage.local.get(["difficulty"]).then(function(result) {
+        selectDifficulty(result.difficulty, true);
+    });
+    
+}
+
+function setDifficulty(level) {
+    chrome.storage.local.set({ "difficulty": level }).then(function(result) {
+    });
+}
+
+document.getElementById("diff-easy-button").addEventListener('click', () => { 
+    selectDifficulty(0, true);
+});
+
+document.getElementById("diff-normal-button").addEventListener('click', () => { 
+    selectDifficulty(1, true);
+});
+
+
+document.getElementById("diff-hard-button").addEventListener('click', () => { 
+    selectDifficulty(2, true);
+});
+
+document.getElementById("accept-duo-button").addEventListener('click', () => { 
+    selectDifficulty(3, true);
+});
+
+
+document.getElementById("diff-duo-button").addEventListener('click', () => {    
+    document.getElementById("conformation-duo-buttons").style.display = "block";
+    document.getElementById("diff-buttons").style.display = "none";
+    document.getElementById("diff-title").style.display = "none";
+    document.getElementById("difficulty-flavour-text").innerHTML = 
+        '<span style="color: #ee5555">WARNING!</span> &nbsp;' +   
+        '<span style="color: #f1f7fb">Setting your difficulty to Torture will ' +
+        '<span style="color: #ee5555">LOCK YOUR SETTINGS</span>' +
+        '. </span>';
+});
+
+
+document.getElementById("deny-duo-button").addEventListener('click', () => {     
+    document.getElementById("conformation-duo-buttons").style.display = "none";
+    document.getElementById("diff-buttons").style.display = "block";
+    document.getElementById("diff-title").style.display = "block";
+    document.getElementById("diff-duo-button").classList.remove("button-blocked");
+    selectDifficulty(currentlySelectedDifficulty, false);
+});
+
+function selectDifficulty(level, setting) {
+
+    if(level == 0) {
+        document.getElementById("diff-easy-button").classList.remove("button-selected");
+        document.getElementById("diff-normal-button").classList.remove("button-selected");
+        document.getElementById("diff-hard-button").classList.remove("button-selected");
+        document.getElementById("diff-duo-button").classList.remove("button-selected");
+
+        document.getElementById("diff-easy-button").classList.add("button-selected");  
+        currentlySelectedDifficulty = 0;
+
+        document.getElementById("conformation-duo-buttons").style.display = "none";
+        document.getElementById("diff-duo-button").classList.remove("button-blocked");
+        document.getElementById("difficulty-flavour-text").innerHTML = "Difficulty set to Easy.";  
+
+        if(setting == true) setDifficulty(level);
+    }
+    
+
+    if(level == 1) {
+        document.getElementById("diff-easy-button").classList.remove("button-selected");
+        document.getElementById("diff-normal-button").classList.remove("button-selected");
+        document.getElementById("diff-hard-button").classList.remove("button-selected");
+        document.getElementById("diff-duo-button").classList.remove("button-selected");
+        
+        document.getElementById("diff-normal-button").classList.add("button-selected");  
+        currentlySelectedDifficulty = 1;
+        
+        document.getElementById("conformation-duo-buttons").style.display = "none";
+        document.getElementById("diff-duo-button").classList.remove("button-blocked");
+        document.getElementById("difficulty-flavour-text").innerHTML = "Difficulty set to Normal."; 
+
+        if(setting == true) setDifficulty(level);
+    }
+    
+
+    if(level == 2) {
+        document.getElementById("diff-easy-button").classList.remove("button-selected");
+        document.getElementById("diff-normal-button").classList.remove("button-selected");
+        document.getElementById("diff-hard-button").classList.remove("button-selected");
+        document.getElementById("diff-duo-button").classList.remove("button-selected");
+       
+        document.getElementById("diff-hard-button").classList.add("button-selected"); 
+        currentlySelectedDifficulty = 2;
+        
+        document.getElementById("conformation-duo-buttons").style.display = "none";
+        document.getElementById("diff-duo-button").classList.remove("button-blocked");
+        document.getElementById("difficulty-flavour-text").innerHTML = "Difficulty set to Hard.";  
+
+        if(setting == true)  setDifficulty(level);
+   }
+
+    if(level == 3) {
+        document.getElementById("diff-easy-button").classList.add("button-blocked");
+        document.getElementById("diff-normal-button").classList.add("button-blocked");
+        document.getElementById("diff-hard-button").classList.add("button-blocked"); 
+
+        document.getElementById("diff-easy-button").classList.remove("button-selected");
+        document.getElementById("diff-normal-button").classList.remove("button-selected");
+        document.getElementById("diff-hard-button").classList.remove("button-selected");
+        document.getElementById("diff-duo-button").classList.remove("button-selected");
+
+        document.getElementById("diff-easy-button").disabled = true;
+        document.getElementById("diff-normal-button").disabled = true;
+        document.getElementById("diff-hard-button").disabled = true;
+        document.getElementById("diff-duo-button").disabled = true;
+
+        document.getElementById("diff-duo-button").classList.add("button-selected"); 
+        document.getElementById("diff-duo-button").classList.remove("button-blocked");
+
+        currentlySelectedDifficulty = 3;
+        document.getElementById("conformation-duo-buttons").style.display = "none";
+        document.getElementById("diff-buttons").style.display = "block";
+        document.getElementById("diff-title").style.display = "block";
+        document.getElementById("difficulty-flavour-text").innerHTML = "Difficulty set to Torture. Good luck!";  
+
+        if(setting == true)  setDifficulty(level);
+
+    }
+    
+}
+
+async function resetData() {
+
+        const d = new Date();
+        const timeOfInstall = d.getTime();
+    
+        await chrome.storage.local.set({ "state": 1 });
+        await chrome.storage.local.set({ "time": timeOfInstall });
+        await chrome.storage.local.set({ "extended": true });
+        await chrome.storage.local.set({ "username": "" });
+
+        // mean mode
+        // const storedDifficulty = await chrome.storage.local.get(["difficulty"]);
+        // if(storedDifficulty.difficulty != 3) {
+        //     await chrome.storage.local.set({ "difficulty": 1 });
+        // }
+    
+        await chrome.storage.local.set({ "difficulty": 1 });
+        await chrome.storage.local.set({ "ignoreDifficulty": false });
+        await chrome.storage.local.set({ "ignoreTime": false });
+        await chrome.storage.local.set({ "time2": timeOfInstall });
+        await chrome.storage.local.set({ "time3": timeOfInstall });
+
+        window.location.hash = "#welcome";
+        window.location.reload();
 
 }
 
+document.getElementById("reset-data-button").addEventListener('click', () => { 
+    resetData();
+});
+
+
+// -------------------------- OTHER --------------------------
+
+
 if(window.location.hash == '#welcome') {
     
-    document.getElementById("welcome").style.display = "block";
+    document.getElementById("welcome-section").style.display = "block";
     document.getElementById("title").style.display = "none";
     document.getElementById("current-username").style.display = "none";
+    document.getElementById("difficulty-flavour-text").innerHTML = "";
+    document.getElementById("diff-title").innerHTML = "Difficulty level (optional):";
+
+    chrome.storage.local.get(["difficulty"]).then(function(result) {
+        selectDifficulty(result.difficulty, true);
+    });
+    
     
 } else {
     
     getStoredUsername();
-    
+    getDifficulty();
 }
 
 
 
-// -------------------------- DEBUG --------------------------
 
-function humanReadableDate() {
-    let date = new Date();
-    let output = "" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+
+
+
+
+// -------------------------- DEBUG FUNCTIONS --------------------------
+
+
+// to remove
+if(window.location.hash == '#debug') initDebug();
+
+
+async function initDebug() {
+
+        
+    chrome.storage.local.get(null).then(function(result) {
+        
+        savedData = result
+        console.log(savedData);
+    
+        document.getElementById("set-stage-data").innerHTML =
+            "Stage: " + savedData.state;
+        
+        document.getElementById("d-edit-diff-data").innerHTML =
+            "Difficulty: " + savedData.difficulty;
+        
+        document.getElementById("ignore-diff-data").innerHTML =
+            "Ignoring difficulty: " + savedData.ignoreDifficulty;
+                
+        document.getElementById("ignore-time-data").innerHTML =
+            "Ignoring time: " + savedData.ignoreTime;
+        
+        document.getElementById("set-time-data").innerHTML =
+            "Current time: " + humanReadableDate(savedData.time);
+        
+        document.getElementById("set-time-2-data").innerHTML =
+            "First page load today: " + humanReadableDate(savedData.time2);
+
+        document.getElementById("set-time-3-data").innerHTML =
+            "Time of last popup: " + humanReadableDate(savedData.time3);
+    });
+
+}
+
+function humanReadableDate(date = 0) {
+    var d = new Date(date);
+    let output = "" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
     date = null;
     return output
 }
 
 document.getElementById("show-debug-button").addEventListener('click', () => { 
     document.getElementById("debug").style.display = "block";
+    initDebug();
+});
+
+// this one is standalone, works fine
+document.getElementById("d-edit-diff-button").addEventListener('click', () => { 
+    let inputValue = document.getElementById("d-diff-input").value;
+    document.getElementById("d-edit-diff-data").innerHTML = "Difficulty: " + inputValue;
+    selectDifficulty(inputValue, true);
+    getDifficulty();
+});
+
+document.getElementById("d-edit-diff-reload-button").addEventListener('click', () => { 
+    window.location.reload();
 });
 
 document.getElementById("edit-stage-button").addEventListener('click', () => { 
 
     let inputValue = document.getElementById("stage-input").value;
-    let responseElement = document.getElementById("set-stage-response");
 
-    chrome.storage.local.set({ "state": "stage" + inputValue }).then(() => {
-        
-        console.log("State set successfully.");
-        responseElement.innerHTML = "Stage set to " + inputValue + " at " + humanReadableDate();
-
+    chrome.storage.local.set({ "state": parseInt(inputValue) }).then(() => {
         chrome.storage.local.get(["state"]).then(function(response) {
-                    document.getElementById("check-stage-response").innerHTML = 
-                        "Stage is currently " + response.state + " at " + humanReadableDate();
+            document.getElementById("set-stage-data").innerHTML = 
+                "Stage: " + response.state;
         });
-
     });
 
 });
 
-document.getElementById("check-stage-button").addEventListener('click', () => { 
+
+document.getElementById("ignore-diff-button").addEventListener('click', () => {  
+    savedData.ignoreDifficulty = savedData.ignoreDifficulty == true ? false : true;
     
-    let responseElement = document.getElementById("check-stage-response");
-
-    chrome.storage.local.get(["state"]).then(function(response) {
-        responseElement.innerHTML = "Stage is currently " + response.state + " at " + humanReadableDate();
+    chrome.storage.local.set({ "ignoreDifficulty": savedData.ignoreDifficulty }).then(() => {
+        chrome.storage.local.get(["ignoreDifficulty"]).then(function(response) {
+        document.getElementById("ignore-diff-data").innerHTML = 
+            "Ignoring difficulty: " + response.ignoreDifficulty;
+        });
     });
-
 });
 
-document.getElementById("reset-time-button").addEventListener('click', () => { 
+document.getElementById("ignore-time-button").addEventListener('click', () => {  
+    savedData.ignoreTime = savedData.ignoreTime == true ? false : true;
     
-    let responseElement = document.getElementById("reset-time-response");
-
-    const currentDate = new Date();
-    const currentTime = currentDate.getTime();
-
-    chrome.storage.local.set({ "time": currentTime }).then(() => {
-            responseElement.innerHTML = "Timer set to 0 ("+ currentTime +") at " + humanReadableDate();
-    });
-});
-
-document.getElementById("check-time-button").addEventListener('click', () => { 
-
-    let responseElement = document.getElementById("check-time-response");
-
-    chrome.storage.local.get(["time"]).then(function(response) {
-
-        const currentDate = new Date();
-        const timeElapsedSeconds = (currentDate.getTime() - response.time) / 1000;
-        responseElement.innerHTML = 
-            
-            "Time value is currently " + timeElapsedSeconds + " seconds (" +
-            Math.floor(timeElapsedSeconds/60/60) + " hours, " +
-            Math.round(timeElapsedSeconds/60 - (Math.floor(timeElapsedSeconds/60/60) * 60)) + " minutes).";
+    chrome.storage.local.set({ "ignoreTime": savedData.ignoreTime }).then(() => {
+        chrome.storage.local.get(["ignoreTime"]).then(function(response) {
+        document.getElementById("ignore-time-data").innerHTML = 
+            "Ignoring time: " + response.ignoreTime;
+        });
     });
 });
 
 
+document.getElementById("set-time-button").addEventListener('click', () => { 
+    
+    let inputValue = document.getElementById("set-time-input").value;
+    inputValue = inputValue == "" ? "00:00" : inputValue;
+    
+    var d = new Date();
+    const unparsedDate = new Date(d.toString().split(":")[0].slice(0,-2) + inputValue);
+    const parsedDate = Date.parse(unparsedDate);
+
+    chrome.storage.local.set({ "time": parsedDate }).then(() => {
+        document.getElementById("set-time-data").innerHTML = 
+            "Time set to " + parsedDate + " (" + humanReadableDate(parsedDate) + ")";
+    });
+});
+
+
+document.getElementById("set-time-2-button").addEventListener('click', () => { 
+    
+    let inputValue = document.getElementById("set-time-2-input").value;
+    inputValue = inputValue == "" ? "00:00" : inputValue;
+    
+    var d = new Date();    
+    const unparsedDate = new Date(d.toString().split(":")[0].slice(0,-2) + inputValue);
+    const parsedDate = Date.parse(unparsedDate);
+
+    chrome.storage.local.set({ "time2": parsedDate }).then(() => {
+        document.getElementById("set-time-2-data").innerHTML = 
+            "First page load set to " + parsedDate + " (" + humanReadableDate(parsedDate) + ")";
+    });
+});
+
+document.getElementById("set-time-3-button").addEventListener('click', () => { 
+    
+    let inputValue = document.getElementById("set-time-3-input").value;
+    inputValue = inputValue == "" ? "00:00" : inputValue;
+    
+    var d = new Date();
+    const unparsedDate = new Date(d.toString().split(":")[0].slice(0,-2) + inputValue);
+    const parsedDate = Date.parse(unparsedDate);
+
+    chrome.storage.local.set({ "time3": parsedDate }).then(() => {
+        document.getElementById("set-time-3-data").innerHTML = 
+            "Time of last popup has been set to " + parsedDate + " (" + humanReadableDate(parsedDate) + ")";
+    });
+});

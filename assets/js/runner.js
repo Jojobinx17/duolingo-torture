@@ -1,160 +1,122 @@
 
-// on page load, start loop that tries to create popup over and over
-// this prevents devtools strats, while only reading from storage
-// only ping duolingo api on reloads
+
+// This code will get injected into every webpage that is visited by the user
 
 
 const currentDate = new Date();
 const timeOfLoad = currentDate.getTime();
-
-let timerForStage0 = 60; // seconds (unused)
-let timerForStage1 = 60; // seconds (unused)
-let timerForStage2 = 60; // seconds (unused)
-
 let stageProcessed = false;
 
-async function duolingoMain() {
+async function duolingoMain(data = {}, stageToProcess = 0) {
 
-    let data = {};
+    console.log("Running main script (stage " + stageToProcess + ")...");
 
-    // fetching state
-    const stateResponse = await chrome.storage.local.get(["state"]);
-    data.state = stateResponse.state;
-    
-    // fetching time
-    const timeResponse = await chrome.storage.local.get(["time"]);
-    data.time = timeResponse.time;
-    
-    // fetching stored uername
-    const usernameResponse = await chrome.storage.local.get(["username"]);
-    data.username = usernameResponse.username;
+    if(data.extended != true && data.extended != false) data.extended = false;
 
-    // fetching last known extended value
-    const lastKnownExtendedResponse = await chrome.storage.local.get(["extended"]);
-    data.lastKnownExtended = lastKnownExtendedResponse.extended;
-    if(data.lastKnownExtended != true && data.lastKnownExtended != false) data.lastKnownExtended = false;
-
-    if(data.lastKnownExtended == false) {
+    if(data.extended == false) {
 
         // ============================= STAGE 0 ============================= 
-        // do nothing, but increment state if enough time has passed.
             
-        if(data.state == "stage0") {
-    
+        if(stageToProcess == 0) {
+            
             stageProcessed = true;
-            console.log("State value is zero.");
-            
-            await handleTimers(0);
-            
+            console.log("State value is zero.");            
         }
     
         // ============================= STAGE 1 ============================= 
-        // create small popups on page load
         
-        if(data.state == "stage1") {
+        if(stageToProcess == 1) {
     
             stageProcessed = true;
             console.log("State value is one, creating small popups...");
     
-            await createInPagePopup(0);        
-            await createInPagePopup(1);
-    
-            await handleTimers(1);
-            
+            createInPagePopup(0);        
+            createInPagePopup(1);            
         }
         
         // ============================= STAGE 2 ============================= 
-        // popup that forces user to click 'later' to continue browsing
         
-        if(data.state == "stage2") {
+        if(stageToProcess == 2) {
     
             stageProcessed = true;
             console.log("State value is two, opening popup window...");
     
             var extensionID = chrome.runtime.id;
-    
             const response = await chrome.runtime.sendMessage({ type: "closablePopup", url: window.location.href} );
-            console.log(response);
-    
-            // handle timers
-            await handleTimers(1);
-    
+            console.log(response);    
         }
     
         // ============================= STAGE 3 ============================= 
-        // completely block the entire internet
         
-        if(data.state == "stage3") {
+        if(stageToProcess == 3) {
 
             stageProcessed = true;
             console.log("State value is three, opening forced popup window...");
 
             var extensionID = chrome.runtime.id;
-
             var openUnclosablePopup = setInterval(function(){
                 const response = chrome.runtime.sendMessage({ type: "unclosablePopup", url: window.location.href});
             }, 200);
 
         }
 
-        // handling undefined values
-        if(stageProcessed == false) {
-            console.log("Value(s) unable to be used, resetting all data...");
-    
-            chrome.storage.local.set({ "state": "stage0" }).then(() => {
-                console.log("State has been reset to zero.");
-            });
-            chrome.storage.local.set({ "time": timeOfLoad }).then(() => {
-                console.log("Time reset successfully.");
-            });
-        }
-        
     } else {
-
-        console.log("User has completed a lesson today, doing nothing.");
-
+            
+        console.log("User has completed a lesson today.");
     }
 
-    //fetching duolingo api
-    const apiResponse = await chrome.runtime.sendMessage({ type: "getDuolingoUserData", username: data.username} );  
-    data.realExtended = apiResponse;
+    // ============================= GETTING DUOLINGO DATA ============================= 
+
+    console.log("Fetching user data from Duolingo API...");
+
+    const apiResponse = await chrome.runtime.sendMessage({ type: "getDuolingoUserData", username: data.username} );
+
+    console.log("Duolingo API retuned " + apiResponse + ", saved value was " + data.extended + ".");
     
-    console.log("Full user data:", data);
+    if(apiResponse != data.extended) {
 
-    if(data.realExtended != data.lastKnownExtended) {
-
-        console.log(data.state, data.realExtended);
+        console.log("Saved completion data was incorrect, updating...");
 
         // stage 0
-        if(data.state == "stage0" && data.realExtended == false) await handleTimers(0);
+        if(data.state == 0 && apiResponse == false) {
+            console.log("Stage is zero.");
+        }
         
-
         // stage 1
-        if(data.state == "stage1" && data.realExtended == true) {
+        if(data.state == 1 && apiResponse == true) {
             document.getElementById("duo-sees-you-0").remove();
             document.getElementById("duo-sees-you-1").remove();
+            console.log("In-page popups removed.");
         }
 
-        if(data.state == "stage1" && data.realExtended == false) {
-            await createInPagePopup(0);        
-            await createInPagePopup(1);
-            await handleTimers(1);
+        if(data.state == 1 && apiResponse == false) {
+            createInPagePopup(0);        
+            createInPagePopup(1);
+            console.log("In-page popups created.");
         }
 
-        if(data.state == "stage2" && data.realExtended == false) {
+        if(data.state == 2 && apiResponse == false) {
             const response = await chrome.runtime.sendMessage({ type: "closablePopup", url: window.location.href} );
-            await handleTimers(2);
+            console.log("Closable popup created.");
         }
 
-        if(data.state == "stage3" && data.realExtended == false) {
-            var openUnclosablePopup = setInterval(function(){
+        if(data.state == 3 && apiResponse == false) {
+            console.log("Attempting to open unclosable popup...");
+            var openUnclosablePopup = setInterval(function() {
                 const response = chrome.runtime.sendMessage({ type: "unclosablePopup", url: window.location.href});
             }, 200);
         }
 
         // update the local storage to reflect the proper value
-        await chrome.storage.local.set({ "extended": data.realExtended });
+        await chrome.storage.local.set({ "extended": apiResponse });
+        console.log("Saved completion data updated successfully.");
+    
+    } else {
+        console.log("Saved completion data was correct.");
     }
+
+    console.log("Main script finished.");
+    return true;
 }
 
 
@@ -165,12 +127,7 @@ async function duolingoMain() {
 // ============================= FUNCTIONS =============================
 
 
-
-async function handleTimers(currentStage) {
-
-}
-
-async function createInPagePopup(type) {
+function createInPagePopup(type) {
 
     // intialize some variables and the font to use
     
@@ -188,11 +145,9 @@ async function createInPagePopup(type) {
 
     document.head.appendChild(newStyle);
 
-        var container = document.createElement('div')
-
+    var container = document.createElement('div')
 
     // this styles the popup
-    
     var styleString = 
         "all: revert; position: fixed; height: 50px; width: 200px; padding-left: 10px; padding-right: 10px; " + 
         "border: 4px solid #37464f; border-radius: 10px; background-color: #131f24; font-family: 'din-round-bold'; " +  
@@ -200,25 +155,222 @@ async function createInPagePopup(type) {
         "color: #f1f7fb; font-size: 20px; line-height: 0px;";
 
     // finally, create the popup
-
     container.id = "duo-sees-you-" + type;
-    
     container.style = styleString;
     container.style.top = yy.toString() + "px";
     container.style.left = xx.toString() + "px";
     container.align = "center";
 
     if(type == 0) container.innerHTML = 'Time to practice?'
-    
     if(type == 1) container.innerHTML = '<img src="' + chrome.runtime.getURL(`assets/images/duo-wave.svg`) + 
                                         '" height="40px" /> <a href="https://duolingo.com/lesson" ' + 
                                         'style="text-decoration: none; color: #49c0f8;">START LESSON</a>';
 
     document.body.appendChild(container);
+    return true;
+}
+
+
+async function duolingoInit(data) {
+
+    console.log("Waking up Duo...");
+
+    let diffProcessed = false;
+    let resetTimer3 = false;
+        
+    let stageToUse = data.stage;
+    let d = new Date(data.time);
+    let storedTime = new Date(data.time);
+
+    if(data.ignoreTime == false) storedTime = new Date();
+
+    // set secondary timer if first time today
+    const storedTime2 = new Date(data.time2);
+
+    if(storedTime2.getDate() != d.getDate()) {
+        chrome.storage.local.set({ "time2": d.getTime() }).then(function(result) {
+            console.log("Timer 2 has been set to " + d.getTime() + " (Date number " +  d.getDate() + ").");
+        });
+    }
+
+    // get data from secondary timer
+    const hoursSinceFirstLoginToday = Math.floor(((d.getTime() - data.time2) / 1000)/60/60);
+
+    // get data from third timer
+    const minutesSinceLastPopup = Math.floor(((d.getTime() - data.time3) / 1000)/60);
+    
+    // get difficulty
+    const currentDifficulty = data.difficulty;
+
+    // debug stuff
+    console.log("");
+    console.log("Current difficulty:", currentDifficulty);
+    console.log("Current username:", data.username);
+
+    console.log("Hours since first login:", hoursSinceFirstLoginToday);
+    console.log("Current hour:", d.getHours());
+    console.log("Minutes since last popup:", minutesSinceLastPopup);
+    console.log("Ignoring difficulty:", data.ignoreDifficulty);
+    console.log("");
+    
+    // easy difficulty
+    if(data.difficulty == 0) {
+
+        // EASY DIFFICULTY REQUIREMENTS
+        // Stage 1 past 1pm or 2 hours since first login
+        // 10 mins since the last popup
+
+        diffProcessed = true;
+        
+        if(data.ignoreDifficulty == false &&  minutesSinceLastPopup > 10) {
+
+            if(hoursSinceFirstLoginToday >= 3) {
+
+                console.log("Difficulty zero (easy) has passed its checks - more than three hours since first login.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 1);
+
+            } else if (d.getHours() >= 13) { 
+                
+                console.log("Difficulty zero (easy) has passed its checks - past 1:00pm.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 1);
+                
+            } else {
+                console.log("Difficulty zero (easy) has failed its checks.");
+            }
+            
+        } else {
+            console.log("Difficulty zero (easy) has failed its checks - less than 10 minutes since last popup.");
+        }
+    }
+
+    if(data.difficulty == 1) {
+
+        // MEDIUM DIFFICULTY REQUIREMENTS
+        // Stage 1 all day, stage 2 after 1:00pm
+        // Stage 2 forced after 3 hours sice first login
+        // both stages need 10 minutes since last popup to activate
+
+        diffProcessed = true;
+
+        if(data.ignoreDifficulty == false && minutesSinceLastPopup > 10) {
+
+            if(hoursSinceFirstLoginToday >= 3) {
+               
+                console.log("Difficulty one (normal) has passed its checks - more than 3 hours since first login.");   
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 2);
+                
+            } else if(d.getHours() >= 13) {
+                
+                console.log("Difficulty one (normal) has passed its checks - past 1:00pm.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 2);
+            
+            } else { 
+    
+                console.log("Difficulty one (normal) has passed its checks - default.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 1);
+            }
+        
+        } else {
+            console.log("Difficulty one (normal) has failed its checks - minutes passed is less than 10.");
+        }
+    }
+
+    if(data.difficulty == 2) {
+
+        // HARD DIFFICULTY REQUIREMENTS
+        // Stage 1 by default, stage 2 after 11:00am, stage 3 after 2:00pm
+        // Force stage 2 after 1 hour of using the computer
+        // Force stage 3 after 3 hours of using the computer
+
+        diffProcessed = true;
+
+        if(data.ignoreDifficulty == false && minutesSinceLastPopup > 5) {
+        
+            if(hoursSinceFirstLoginToday >= 3) {
+                
+                console.log("Difficulty two (hard) has passed its checks - more than 3 hours since first login.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 3);
+                
+            } else if (hoursSinceFirstLoginToday >= 1) {
+    
+                console.log("Difficulty two (hard) has passed its checks - more than 1 hour since first login.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 2);
+    
+            } else if (d.getHours() >= 14) {
+    
+                console.log("Difficulty two (hard) has passed its checks - past 2:00pm.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 3);
+    
+            } else if (d.getHours() >= 11) {
+    
+                console.log("Difficulty two (hard) has passed its checks - past 11:00am.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 2);
+                
+            } else {
+    
+                console.log("Difficulty two (hard) has passed its checks - default.");
+                resetTimers(data.ignoreTime);
+                await duolingoMain(data, 1);
+            }
+            
+        } else {
+            console.log("Difficulty two (hard) has failed its checks - minutes passed is less than 5.");
+        }
+            
+    }
+
+    if(data.difficulty == 3) {
+
+        // TORTURE DIFFICULTY REQUIREMENTS
+        // None, just run whenever it can
+        
+        console.log("Difficulty three (torture) is running...");
+        // we don't need to reset anything here
+        await duolingoMain(data, 3);
+    }
+    
+
+    // do stuff if ignoring difficulty
+    if(data.ignoreDifficulty == true) {
+        console.log("Ignoring difficulty. Using stage value (" + data.state + ") instead.");
+        await duolingoMain(data, data.state);
+    }
+
+    // set values is they are undefined somehow
+    if(diffProcessed == false) {
+        chrome.storage.local.set({ "difficulty": 1 });
+        console.log("Difficulty had a bad value, has been defaulted to normal.");
+    }
+
+    console.log("All processes complete!");
+    console.log("");
+    console.log("Duo is sleeping.");
 
     return true;
 }
 
-duolingoMain();
+async function resetTimers(ignoreTime) {
+    
+    if(ignoreTime == false) {            
+        console.log("Updating timers..."); 
+        await chrome.storage.local.set({ "time3": d.getTime() });
+        console.log("Done.");
+    } else {
+        console.log("Ignoring timers."); 
+    }
+}
+
+chrome.storage.local.get(null).then(function(result) {
+    duolingoInit(result);
+});
 
 
