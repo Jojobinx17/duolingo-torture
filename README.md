@@ -9,5 +9,3 @@ To install:
 - In the top right, turn on 'Developer mode'. You can turn this off once you load the extension.
 - Now, on the top left, select 'Load unpacked'. Select the folder on your computer containing the code from this repository.
 - Follow the instructions on-screen and enjoy!
-
-_Now stop reading this and go extend your streak!_
