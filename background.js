@@ -59,8 +59,9 @@ async function handleRequest(request) {
         let streakExtended = undefined;
 
         try {
-            
+
             const duolingoApiResponse = await fetch("https://www.duolingo.com/api/1/users/show?username=" + request.username);
+
             const jsonResponse = await duolingoApiResponse.json();
             streakExtended = jsonResponse.streak_extended_today;
             

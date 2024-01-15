@@ -1,5 +1,8 @@
 
 
+// Before we get to the code, here's some fun trivia: 
+// This proejct was entirely created on my school chromebook with its default text editor! It's got syntax highlighting, but not much else. Made debugging a little more tricky, lol.
+
 // -------------------------- USERNAME FUNCTIONS --------------------------
 
 
@@ -45,7 +48,11 @@ document.getElementById("save-username-button").addEventListener('click', () => 
                     });
                                         
                 } else if(response.status === 404) {
-                    return Promise.reject('404')
+                    return Promise.reject('err-not-found');
+                    
+                } else if(response.status === 401) {
+                    return Promise.reject('err-auth');
+                    
                 } else {
                     return Promise.reject('other');
                 }
@@ -55,11 +62,24 @@ document.getElementById("save-username-button").addEventListener('click', () => 
                 chrome.storage.local.set({ "username": usernameToCheck }).then(getStoredUsername());
 
             })
-            .catch(error => { showUsernameError();});
+            .catch(error => { showUsernameError(error); });
     }
 
-    async function showUsernameError() {
-        document.getElementById("current-username").innerHTML = "Username does not belong to a Duolingo account.";
+    async function showUsernameError(error) {
+
+        if(error == "err-not-found") {
+            
+            document.getElementById("current-username").innerHTML = "Username does not belong to a Duolingo account.";
+            
+        } else if (error == "err-auth") {
+            
+            document.getElementById("current-username").innerHTML = 'Unable to access the Duolingo API. Please make sure that you are signed into <a style="font-size: 18" target="_blank" href="https://duolingo.com">duolingo.com</a> on this device.';
+            
+        } else {
+            
+            document.getElementById("current-username").innerHTML = "An error occured. Please make sure you are signed into duolingo.com, and you typed in the username correctly.";
+            
+        }
     }
 
     saveUsername();
@@ -91,11 +111,29 @@ async function getStoredUsername() {
 
 // -------------------------- DIFFICULTY BUTTONS --------------------------
 
+document.getElementById("changelog-button").addEventListener('click', () => { 
+    chrome.tabs.create({
+        url: "../../changelog.txt"
+    });
+});
+
+document.getElementById("diff-title-welcome").addEventListener('click', () => { 
+    document.getElementById("difficulty-info").style.display = "block";
+});
+
+document.getElementById("diff-title").addEventListener('click', () => { 
+    document.getElementById("difficulty-info").style.display = "block";
+});
+
+document.getElementById("close-diff-info-button").addEventListener('click', () => { 
+    document.getElementById("difficulty-info").style.display = "none";
+});
+
+
 function getDifficulty(level) {
     chrome.storage.local.get(["difficulty"]).then(function(result) {
         selectDifficulty(result.difficulty, true);
     });
-    
 }
 
 function setDifficulty(level) {
@@ -125,6 +163,7 @@ document.getElementById("diff-duo-button").addEventListener('click', () => {
     document.getElementById("conformation-duo-buttons").style.display = "block";
     document.getElementById("diff-buttons").style.display = "none";
     document.getElementById("diff-title").style.display = "none";
+    document.getElementById("diff-title-welcome").style.display = "none";
     document.getElementById("difficulty-flavour-text").innerHTML = 
         '<span style="color: #ee5555">WARNING!</span> &nbsp;' +   
         '<span style="color: #f1f7fb">Setting your difficulty to Torture will ' +
@@ -264,7 +303,8 @@ if(window.location.hash == '#welcome') {
     document.getElementById("title").style.display = "none";
     document.getElementById("current-username").style.display = "none";
     document.getElementById("difficulty-flavour-text").innerHTML = "";
-    document.getElementById("diff-title").innerHTML = "Difficulty level (optional):";
+    document.getElementById("diff-title").style.display = 'none';
+    document.getElementById("diff-title-welcome").style.display = 'block';
 
     chrome.storage.local.get(["difficulty"]).then(function(result) {
         selectDifficulty(result.difficulty, true);
@@ -287,10 +327,9 @@ if(window.location.hash == '#welcome') {
 
 // -------------------------- DEBUG FUNCTIONS --------------------------
 
-
-// to remove
-if(window.location.hash == '#debug') initDebug();
-
+document.getElementById("close-debug-button").addEventListener('click', () => { 
+    document.getElementById("debug").style.display = "none";
+});
 
 async function initDebug() {
 
@@ -430,3 +469,4 @@ document.getElementById("set-time-3-button").addEventListener('click', () => {
             "Time of last popup has been set to " + parsedDate + " (" + humanReadableDate(parsedDate) + ")";
     });
 });
+

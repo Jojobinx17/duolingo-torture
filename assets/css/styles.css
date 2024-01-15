@@ -22,6 +22,10 @@ Bold font: din-round-bold
 
 */
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: "din-round",sans-serif;
     background-color: #131f24;
@@ -148,6 +152,12 @@ button:not(.button-blocked):hover {
     width: 50%;
 }
 
+.center-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .submit {
     text-decoration: none;
     color: #49c0f8;
@@ -163,4 +173,9 @@ button:not(.button-blocked):hover {
 
 .secondary-text {
     color: grey;
+}
+
+.small-text {
+    color: grey;
+    font-size: 15px;
 }

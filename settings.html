@@ -2,29 +2,12 @@
 <!--
 
     TODO:
-    - Intensity lock option, locks your settings for x days
-    - Costomize practice notifications with the users' current language that they are learning
-    
-    - Difficulty levels -
-    
-    Easy: 
-    - Stage 1, but only after 1:00pm or after 3 hours of usage
-    
-    Medium: 
-    - Stage 1 all day, stage 2 after 1:00pm
-    - Forces stage 2 two hours after using the computer for the first time that day
-    
-    Hard:
-    - Stage 1 at the beginning of the day, stage 2 after 10:00am, stage after 1:00pm
-    - Forces stage 2 after 1 hour of using the computer
-    - Forces stage 3 after 2 hours of using the computer
-    
-    Extreme:
-    - Stage 3 all day, no matter what.
-    - Automatically locks your settings
+    - Info in extension popup (streak info) [done]
+    - Difficulty information in settings page [in progress]
+    - Costomize practice notifications with the users' current language that they are learning [planned]
+    - Intensity lock option, locks your settings for x days [pending]
 
-
-    This is one of my biggest solo projects, at 1558 total lines of code.
+    This is one of my biggest solo projects, and I am pretty proud of how it turned out.
     I hope you enjoy using it as much as I enjoyed developing it!
     - Josiah
     
@@ -86,7 +69,29 @@
 
     <br><br><br><br>
 
-    <p style="font-size: 25px; display: block;" id="diff-title">Difficulty level:</p> <br>
+    <p style="font-size: 25px; display: block;" id="diff-title">Difficulty level:
+
+            &nbsp;
+            <a  class="small-link" 
+                style="font-size: 10px; display: inline-block; vertical-align: middle; line-height: normal;" 
+                id="about-diff-button" 
+                href="#difficulty-info"
+            >What's this?</a>
+        
+    </p> 
+
+    <p style="font-size: 25px; display: none;" id="diff-title-welcome">Difficulty level (optional):
+
+        &nbsp;
+        <a  class="small-link" 
+            style="font-size: 10px; display: inline-block; vertical-align: middle; line-height: normal;" 
+            id="about-diff-button" 
+            href="#difficulty-info"
+            >What's this?</a>
+
+    </p>
+    
+    <br>
 
     <div id="diff-buttons" style="display: block;">
 
@@ -116,26 +121,75 @@
 
     </div>
 
-
     <br><br><br><br>
 
     <small>
-        Made by Jojobinx17. Check out this project on <a class="small-link" href="https://github.com/Jojobinx17/duolingo-torture">GitHub</a>!
+        Made by Jojobinx17. Check out this project on <a class="small-link" target="_blank" href="https://github.com/Jojobinx17/duolingo-torture">GitHub</a>!
 
         <br><br>
 
         <a class="small-link" id="help-button" target="_blank" href="mailto:help.jojobinx17@gmail.com">Help</a>
-
-        <!--  Alternate link (gmail only)
-        <a class="small-link" id="help-button" target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=help.jojobinx@gmail.com&su=&body=What do need help with?&tf=cm">Help</a>
-        -->
         
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-        <a class="small-link" id="show-debug-button" href="#debug">Debug options</a>
-        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-        <a class="small-link" style="color: #ee5555" id="reset-data-button" href="#reset">Reset all data</a
-                                                                        
 
+        <a class="small-link" id="changelog-button" href="#changelog">Changelog</a>
+        
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+        
+        <a class="small-link" id="show-debug-button" href="#debug">Debug options</a>
+        
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+        
+        <a class="small-link" style="color: #ee5555" id="reset-data-button" href="#reset">Reset all data</a>
+        
+
+        <p style="display: none" id="difficulty-info">
+
+            <br><br><br><br><br>
+        
+            Easy: <br><span class="secondary-text">
+            Minor popups, but only after 1:00pm or three hours of usage. 
+
+             </span><br><br>
+            
+            Medium: <br><span class="secondary-text">
+            Minor popups all day, regular popups after 1:00pm.<br>
+            Forces regular popups after three hours of usage.
+
+             </span><br><br>
+            
+            Hard:<br><span class="secondary-text">
+            Minor popups at the beginning of the day, regular popups after 11:00am, major popups after 2:00pm.<br>
+            Popups appear more frequently.<br>
+            Forces regular popups after one hour of usage.<br>
+            Forces major popups after three hours of usage.
+
+             </span><br><br>
+            
+            Torture:<br><span class="secondary-text">
+            Major popups all day, no matter what.<br>
+            Locks your settings.
+
+             </span><br><br><br>
+
+            Minor popups: <span class="secondary-text">
+                Small in-page popups. Popups appear every 10 minutes, and dissapear after a page reload.
+            </span><br>
+            
+            Regular popup: <span class="secondary-text">
+                Popup window that covers the screen. Appears every 10 minutes, and can easily be dismissed.
+            </span><br>
+            
+            Major popup: <span class="secondary-text">
+                Unavoidable popup that forces you to the Duolingo website. Appears constantly until a lesson is completed.
+            </span><br><br><br>
+
+            <a id="close-diff-info-button" href="#difficlty-info">Close this section</a>
+
+            <br><br><br><br>
+
+        </p>
+        
     </small>
 
     <!-- DEBUG -->
@@ -195,6 +249,10 @@
         <p id="set-time-3-data">-</p>
 
         <br><br><br>
+
+        <a id="close-debug-button" href="#debug">Close this section</a>
+
+        <br><br><br><br>
 
     </div>
     

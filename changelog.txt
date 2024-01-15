@@ -1,0 +1,21 @@
+
+
+======== Duolingo Torture - Changelog ========
+
+01-11-2024
+
+- Fixed a bug that caused timers to never update
+
+
+01-09-2024
+
+- Added streak info in the extension popup
+- Added button in the settings menu to see information about the difficulty levels + different popups
+- Added button to view this changelog from the settings menu
+- Fixed some bugs created while building the above features
+
+
+12-22-2023
+
+- Initial release
+- Added a lot of things
