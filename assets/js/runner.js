@@ -210,6 +210,7 @@ async function duolingoInit(data) {
 
     if(data.username.trim() != "") {
         
+        console.log("Currently learning:", data.language, "(TODO: update this dynamically)");
         console.log("Hours since first login:", hoursSinceFirstLoginToday);
         console.log("Current hour:", d.getHours());
         console.log("Minutes since last popup:", minutesSinceLastPopup);

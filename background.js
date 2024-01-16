@@ -36,6 +36,9 @@ chrome.runtime.onInstalled.addListener(function (object) {
         }); 
         chrome.storage.local.set({ "time3": timeOfInstall }).then(() => {
             console.log("Time of last popup has been set to the current time.");
+        });        
+		chrome.storage.local.set({ "language": "none" }).then(() => {
+            console.log("Currently learning language is set to none (default).");
         });
     }
 });

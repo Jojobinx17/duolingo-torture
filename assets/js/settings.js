@@ -1,100 +1,103 @@
 
 
 // Before we get to the code, here's some fun trivia: 
-// This proejct was entirely created on my school chromebook with its default text editor! It's got syntax highlighting, but not much else. Made debugging a little more tricky, lol.
+// The first few version of this extension were entirely created on my school chromebook with its default text editor! It had syntax highlighting, but not much else. Made debugging a little tricky, lol.
 
 // -------------------------- USERNAME FUNCTIONS --------------------------
 
 
 let currentlySelectedDifficulty = 1;
-let myUsername = "";
+let lastEnteredUsername = "";
 let savedUsername = "";
 let savedData = {};
 
 document.getElementById("save-username-button").addEventListener('click', () => { 
-
-    async function saveUsername() {
-
-        let inputValue = document.getElementById("username-input").value;
-
-        if(inputValue.trim() == "" || inputValue == undefined) {
-            
-            document.getElementById("current-username").innerHTML = "Enter a valid username.";
-            document.getElementById("status").style.display = "none";
-            
-        } else {
-
-            if(myUsername != inputValue && savedUsername != inputValue) {
-                
-                document.getElementById("status").style.display = "none";
-                let usernameSuccess = await checkUsername(inputValue);
-                document.getElementById("current-username").innerHTML = "Checking username...";
-                myUsername = inputValue;
-            }
-
-            document.getElementById("current-username").style.display = "block";
-        }
-    }
-
-    async function checkUsername(usernameToCheck) {
-
-        fetch("https://www.duolingo.com/api/1/users/show?username=" + usernameToCheck)
-            .then(response => {
-                if (response.ok) {
-
-                    response.json().then(function(result){
-                        console.log(result.languages);
-                        return "success";
-                    });
-                                        
-                } else if(response.status === 404) {
-                    return Promise.reject('err-not-found');
-                    
-                } else if(response.status === 401) {
-                    return Promise.reject('err-auth');
-                    
-                } else {
-                    return Promise.reject('other');
-                }
-            })
-            .then(data => { 
-                document.getElementById("status").style.display = "block"; 
-                chrome.storage.local.set({ "username": usernameToCheck }).then(getStoredUsername());
-
-            })
-            .catch(error => { showUsernameError(error); });
-    }
-
-    async function showUsernameError(error) {
-
-        if(error == "err-not-found") {
-            
-            document.getElementById("current-username").innerHTML = "Username does not belong to a Duolingo account.";
-            
-        } else if (error == "err-auth") {
-            
-            document.getElementById("current-username").innerHTML = 'Unable to access the Duolingo API. Please make sure that you are signed into <a style="font-size: 18" target="_blank" href="https://duolingo.com">duolingo.com</a> on this device.';
-            
-        } else {
-            
-            document.getElementById("current-username").innerHTML = "An error occured. Please make sure you are signed into duolingo.com, and you typed in the username correctly.";
-            
-        }
-    }
-
     saveUsername();
+});
+
+document.addEventListener('keypress', function(event) {
+	if (event.key === "Enter") {
+		saveUsername();
+	}
 });
 
 document.getElementById("close-button").addEventListener('click', () => { 
     window.close();
 });
 
+async function saveUsername() {
+
+	let inputValue = document.getElementById("username-input").value;
+
+	if(inputValue.trim() == "" || inputValue == undefined) {
+
+		document.getElementById("current-username").innerHTML = "Enter a valid username.";
+		document.getElementById("status").style.display = "none";
+
+	} else {
+
+		if(lastEnteredUsername != inputValue && savedUsername != inputValue) {
+
+			document.getElementById("status").style.display = "none";
+			let usernameSuccess = await checkUsername(inputValue);
+			document.getElementById("current-username").innerHTML = "Checking username...";
+			lastEnteredUsername = inputValue;
+		}
+
+		document.getElementById("current-username").style.display = "block";
+	}
+}
+
+async function checkUsername(usernameToCheck) {
+
+	fetch("https://www.duolingo.com/api/1/users/show?username=" + usernameToCheck)
+		.then(response => {
+			if (response.ok) {
+
+				response.json().then(function(result){
+					getCurrentlyLearningLanguage(result.languages);
+					return "success";
+				});
+
+			} else if(response.status === 404) {
+				return Promise.reject('err-not-found');
+
+			} else if(response.status === 401) {
+				return Promise.reject('err-auth');
+
+			} else {
+				return Promise.reject('other');
+			}
+		})
+		.then(data => { 
+			document.getElementById("status").style.display = "block"; 
+			chrome.storage.local.set({ "username": usernameToCheck }).then(getStoredUsername());
+
+		})
+		.catch(error => { showUsernameError(error); });
+}
+
+async function showUsernameError(error) {
+	
+	if(error == "err-not-found") {
+		document.getElementById("current-username").innerHTML = "Username does not belong to a Duolingo account.";
+		
+	} else if (error == "err-auth") {
+		lastEnteredUsername = "";
+		document.getElementById("current-username").innerHTML = 'Unable to access the Duolingo API. Please make sure that you are signed into <a style="font-size: 18" target="_blank" href="https://duolingo.com">duolingo.com</a> on this device.';
+		
+	} else {
+		lastEnteredUsername = "";
+		document.getElementById("current-username").innerHTML = "An error occured. Please make sure you are signed into duolingo.com, and you typed in the username correctly.";
+	}
+}
+
 async function getStoredUsername() {
 
     const storedUsername = await chrome.storage.local.get(["username"]);
     let element = document.getElementById("current-username");
 
-    myUsername = storedUsername.username;
+    lastEnteredUsername = storedUsername.username;
     savedUsername = storedUsername.username;
     
     element.style.display = "block";
@@ -106,8 +109,26 @@ async function getStoredUsername() {
     }
 }
 
+async function getCurrentlyLearningLanguage(languages) {
 
+	for(let i = 0; i < languages.length; i++) {
+		
+		if(languages[i].current_learning == true) {
+			await chrome.storage.local.set({ "language": languages[i].language_string });
+			console.log("Current language set to " + languages[i].language_string);
+			return true;
+		}
+	}
+	
+	const currentlyStoredLanguage = await chrome.storage.local.get(["language"]);
+		
+	if(currentlyStoredLanguage !== "none") {
+		await chrome.storage.local.set({ "language": languages[i].language_string });
+		console.log("Current language set to " + languages[i].language_string);
+	}
 
+	return true;
+}
 
 // -------------------------- DIFFICULTY BUTTONS --------------------------
 
@@ -283,6 +304,7 @@ async function resetData() {
         await chrome.storage.local.set({ "ignoreTime": false });
         await chrome.storage.local.set({ "time2": timeOfInstall });
         await chrome.storage.local.set({ "time3": timeOfInstall });
+		await chrome.storage.local.set({ "language": "none" });
 
         window.location.hash = "#welcome";
         window.location.reload();
@@ -333,7 +355,6 @@ document.getElementById("close-debug-button").addEventListener('click', () => {
 
 async function initDebug() {
 
-        
     chrome.storage.local.get(null).then(function(result) {
         
         savedData = result
@@ -399,7 +420,6 @@ document.getElementById("edit-stage-button").addEventListener('click', () => {
     });
 
 });
-
 
 document.getElementById("ignore-diff-button").addEventListener('click', () => {  
     savedData.ignoreDifficulty = savedData.ignoreDifficulty == true ? false : true;
