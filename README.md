@@ -1,4 +1,4 @@
-# Duolingo Torture - Invasive Duolingo Reminders
+# Duolingo Torture - Invasive Duolingo Reminders (v1.1)
 
 _Note: This project is still in active development/testing. Please report any issues to this repo's issues tab, or contact help.jojobinx17@gmail.com._
 
