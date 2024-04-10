@@ -6,7 +6,7 @@
 
 - Better UX on some popups
 - Fixed Turture difficulty turning itself off
-- Other minor fixes
+- Other minor bugfixes
 
 01-11-2024
 
