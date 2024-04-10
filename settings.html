@@ -1,270 +1,299 @@
-
 <!--
 
     TODO:
     - Info in extension popup (streak info) [done]
-    - Difficulty information in settings page [in progress]
+    - Difficulty information in settings page [done]
     - Costomize practice notifications with the users' current language that they are learning [planned]
-    - Intensity lock option, locks your settings for x days [pending]
+    - Intensity lock option, locks your settings for x days [planned]
 
     This is one of my biggest solo projects, and I am pretty proud of how it turned out.
     I hope you enjoy using it as much as I enjoyed developing it!
     - Josiah
-    
+
 -->
 
 <head>
-
     <title>Duolingo Torture - Settings</title>
 
-    <link rel="stylesheet" href="assets/css/styles.css">
-
+    <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 
+<body>
+    <div align="center">
+        <p style="font-size: 25px; display: none" id="welcome-section">
+            <br />
 
-<body> <div align="center">
+            Welcome! Please enter the required information below.
+            <br /><br />
 
-    <p style="font-size: 25px; display: none" id="welcome-section">
-
-        <br>
-
-        Welcome! Please enter the required information below.
-        <br><br>
-
-        This extension <a style="color: #ee5555; font-size: 25px">WILL NOT WORK</a> if this is not filled out properly. 
-        <br>
-
-    </p>
-
-    <span id="title">
-
-        <p class="title">Extension Settings</p>
-        <br style="line-height: .2">
-        <hr>
-
-    </span>
-
-    <br><br><br>
-
-    <p style="font-size: 25px">Duolingo username: </p>
-
-    <br>
-
-    <input type="text" id="username-input">
-
-    &nbsp; &nbsp;
-
-    <a id="save-username-button" class="submit" href="#submit">SUBMIT</a>
-
-    <br><br>
-
-    <p id="status" style="display: none">
-
-        Success! 
-        <a id="close-button" href="#close">  Close this page?</a>
-
-    </p>
-
-    <p id="current-username" class="secondary-text" style="display: block;">Current username: undefined</p>
-
-    <br><br><br><br>
-
-    <p style="font-size: 25px; display: block;" id="diff-title">Difficulty level:
-
-            &nbsp;
-            <a  class="small-link" 
-                style="font-size: 10px; display: inline-block; vertical-align: middle; line-height: normal;" 
-                id="about-diff-button" 
-                href="#difficulty-info"
-            >What's this?</a>
-        
-    </p> 
-
-    <p style="font-size: 25px; display: none;" id="diff-title-welcome">Difficulty level (optional):
-
-        &nbsp;
-        <a  class="small-link" 
-            style="font-size: 10px; display: inline-block; vertical-align: middle; line-height: normal;" 
-            id="about-diff-button" 
-            href="#difficulty-info"
-            >What's this?</a>
-
-    </p>
-    
-    <br>
-
-    <div id="diff-buttons" style="display: block;">
-
-        <button id="diff-easy-button" class="">Easy</button>
-        <button id="diff-normal-button" class="">Normal</button>
-        <button id="diff-hard-button" class="">Hard</button>
-        <button id="diff-duo-button" class="">Torture</button>
-
-    </div>
-
-    <br>
-
-    <p class="secondary-text" id="difficulty-flavour-text"></p>
-
-    <div id="conformation-duo-buttons" style="display: none;">
-
-        <br>
-
-        <a href="#submit" id="accept-duo-button" style="font-size: 20px;">
-            CONTINUE</a> 
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        <a href="#submit" id="deny-duo-button" style="font-size: 20px;">
-            CANCEL</a>
-
-
-    </div>
-
-    <br><br><br><br>
-
-    <small>
-        Made by Jojobinx17. Check out this project on <a class="small-link" target="_blank" href="https://github.com/Jojobinx17/duolingo-torture">GitHub</a>!
-
-        <br><br>
-
-        <a class="small-link" id="help-button" target="_blank" href="mailto:help.jojobinx17@gmail.com">Help</a>
-        
-        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-
-        <a class="small-link" id="changelog-button" href="#changelog">Changelog</a>
-        
-        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-        
-        <a class="small-link" id="show-debug-button" href="#debug">Debug options</a>
-        
-        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-        
-        <a class="small-link" style="color: #ee5555" id="reset-data-button" href="#reset">Reset all data</a>
-        
-
-        <p style="display: none" id="difficulty-info">
-
-            <br><br><br><br><br>
-        
-            Easy: 
-			
-			<br><br><span class="secondary-text">
-            	Minor popups, but only after 1:00pm or three hours of usage. 
-			</span><br><br><br>
-            
-            Medium: 
-			
-			<br><br><span class="secondary-text">
-            	Minor popups all day, regular popups after 1:00pm.<br>
-            	Forces regular popups after three hours of usage.
-			</span><br><br><br>
-            
-            Hard:
-			
-			<br><br><span class="secondary-text">
-				Minor popups at the beginning of the day, regular popups after 11:00am, major popups after 2:00pm.<br>
-				Popups appear more frequently.<br>
-				Forces regular popups after one hour of usage.<br>
-				Forces major popups after three hours of usage.
-            </span><br><br><br>
-            
-            Torture:
-			
-			<br><br><span class="secondary-text">
-            	Major popups all day, no matter what.<br>
-            	Locks your settings.
-			</span><br><br><br><br><br>
-			
-
-            Minor popups: 
-			<span class="secondary-text">
-                Small in-page popups. Popups appear every 10 minutes, and dissapear after a page reload.
-            </span><br><br>
-            
-            Regular popup: 
-			<span class="secondary-text">
-                Popup window that covers the screen. Appears every 10 minutes, and can easily be dismissed.
-            </span><br><br>
-            
-            Major popup: 
-			<span class="secondary-text">
-                Unavoidable popup that forces you to the Duolingo website. Appears constantly until a lesson is completed.
-            </span><br><br><br>
-
-            <a id="close-diff-info-button" href="#difficlty-info">Close this section</a>
-
-            <br><br><br><br>
-
+            This extension
+            <a style="color: #ee5555; font-size: 25px">WILL NOT WORK</a> if this
+            is not filled out properly.
+            <br />
         </p>
-        
-    </small>
 
-    <!-- DEBUG -->
+        <span id="title">
+            <p class="title">Extension Settings</p>
+            <br style="line-height: 0.2" />
+            <hr />
+        </span>
 
-    <div id="debug" style="display: none">
+        <br /><br /><br />
 
-        <br><br><br><br><br>
+        <p style="font-size: 25px">Duolingo username:</p>
 
-        <p class="title">Debug Options</p>
-        <br>
-        <hr>
+        <br />
 
-        <br><br><br><br>
+        <input type="text" id="username-input" autocomplete="off" autofocus />
 
-        Set difficulty (unrestricted):
-        <input type="number" id="d-diff-input" value="0"> &nbsp; &nbsp;
-        <a id="d-edit-diff-button" class="submit" href="#submit">SUBMIT</a> &nbsp;&nbsp;&nbsp;
-        <a id="d-edit-diff-reload-button" class="submit" href="#submit">RELOAD</a><br><br>
-        <p id="d-edit-diff-data">-</p>
-         
-        <br><br><br>
+        &nbsp; &nbsp;
 
-        <button id="ignore-diff-button">Toggle difficulty</button><br><br>
-        <p id="ignore-diff-data">-</p>
+        <a id="save-username-button" class="submit" href="#submit">SUBMIT</a>
 
-        <br><br><br>
-        
-        Set stage level:
-        <input type="number" id="stage-input" value="0"> &nbsp; &nbsp;
-        <a id="edit-stage-button" class="submit" href="#submit">SUBMIT</a><br><br>
-        <p id="set-stage-data">-</p>
+        <br /><br />
 
-        <br><br><br>
-        
-        <button id="ignore-time-button">Toggle time</button><br><br>
-        <p id="ignore-time-data">-</p>
+        <p id="status" style="display: none">
+            Success!
+            <a id="close-button" href="#close"> Close this page?</a>
+        </p>
 
-        <br><br><br>
+        <p id="current-username" class="secondary-text" style="display: block">
+            Current username: undefined
+        </p>
 
-        Set time of day:
-        <input type="time" id="set-time-input" value=""> &nbsp; &nbsp;
-        <a id="set-time-button" class="submit" href="#submit">SUBMIT</a><br><br>
-        <p id="set-time-data">-</p>
+        <br /><br /><br /><br />
 
-        <br><br><br>
+        <p style="font-size: 25px; display: block" id="diff-title">
+            Difficulty level: &nbsp;
+            <a
+                class="small-link"
+                style="
+                    font-size: 10px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: normal;
+                "
+                id="about-diff-button"
+                href="#difficulty-info"
+                >What's this?</a
+            >
+        </p>
 
-        Set time of first login:
-        <input type="time" id="set-time-2-input" value=""> &nbsp; &nbsp;
-        <a id="set-time-2-button" class="submit" href="#submit">SUBMIT</a><br><br>
-        <p id="set-time-2-data">-</p>
+        <p style="font-size: 25px; display: none" id="diff-title-welcome">
+            Difficulty level (optional): &nbsp;
+            <a
+                class="small-link"
+                style="
+                    font-size: 10px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: normal;
+                "
+                id="about-diff-button"
+                href="#difficulty-info"
+                >What's this?</a
+            >
+        </p>
 
-        <br><br><br>
-        
-        Set time of last popup:
-        <input type="time" id="set-time-3-input"> &nbsp; &nbsp;
-        <a id="set-time-3-button" class="submit" href="#submit">SUBMIT</a><br><br>
-        <p id="set-time-3-data">-</p>
+        <br />
 
-        <br><br><br>
+        <div id="diff-buttons" style="display: block">
+            <button id="diff-easy-button" class="">Easy</button>
+            <button id="diff-normal-button" class="">Normal</button>
+            <button id="diff-hard-button" class="">Hard</button>
+            <button id="diff-duo-button" class="">Torture</button>
+        </div>
 
-        <a id="close-debug-button" href="#debug">Close this section</a>
+        <br />
 
-        <br><br><br><br>
+        <p class="secondary-text" id="difficulty-flavour-text"></p>
 
+        <div id="conformation-duo-buttons" style="display: none">
+            <br />
+
+            <a href="#submit" id="accept-duo-button" style="font-size: 20px">
+                CONTINUE</a
+            >
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <a href="#submit" id="deny-duo-button" style="font-size: 20px">
+                CANCEL</a
+            >
+        </div>
+
+        <br /><br /><br /><br />
+
+        <small>
+            Made by Jojobinx17. Check out this project on
+            <a
+                class="small-link"
+                target="_blank"
+                href="https://github.com/Jojobinx17/duolingo-torture"
+                >GitHub</a
+            >!
+
+            <br /><br />
+
+            <a
+                class="small-link"
+                id="help-button"
+                target="_blank"
+                href="mailto:help.jojobinx17@gmail.com"
+                >Help</a
+            >
+
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+            <a class="small-link" id="changelog-button" href="#changelog"
+                >Changelog</a
+            >
+
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+            <a class="small-link" id="show-debug-button" href="#debug"
+                >Debug options</a
+            >
+
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+            <a
+                class="small-link"
+                style="color: #ee5555"
+                id="reset-data-button"
+                href="#reset"
+                >Reset all data</a
+            >
+
+            <p style="display: none" id="difficulty-info">
+                <br /><br /><br /><br /><br />
+
+                Easy:
+
+                <br /><br /><span class="secondary-text">
+                    Minor popups, but only after 1:00pm or three hours of usage. </span
+                ><br /><br /><br />
+
+                Medium:
+
+                <br /><br /><span class="secondary-text">
+                    Minor popups all day, regular popups after 1:00pm.<br />
+                    Forces regular popups after three hours of usage. </span
+                ><br /><br /><br />
+
+                Hard:
+
+                <br /><br /><span class="secondary-text">
+                    Minor popups at the beginning of the day, regular popups
+                    after 11:00am, major popups after 2:00pm.<br />
+                    Popups appear more frequently.<br />
+                    Forces regular popups after one hour of usage.<br />
+                    Forces major popups after three hours of usage. </span
+                ><br /><br /><br />
+
+                Torture:
+
+                <br /><br /><span class="secondary-text">
+                    Major popups all day, no matter what.<br />
+                    Locks your settings. </span
+                ><br /><br /><br /><br /><br />
+
+                Minor popups:
+                <span class="secondary-text">
+                    Small in-page popups. Popups appear every 10 minutes, and
+                    dissapear after a page reload. </span
+                ><br /><br />
+
+                Regular popup:
+                <span class="secondary-text">
+                    Popup window that covers the screen. Appears every 10
+                    minutes, and can easily be dismissed. </span
+                ><br /><br />
+
+                Major popup:
+                <span class="secondary-text">
+                    Unavoidable popup that forces you to the Duolingo website.
+                    Appears constantly until a lesson is completed. </span
+                ><br /><br /><br />
+
+                <a id="close-diff-info-button" href="#difficlty-info"
+                    >Close this section</a
+                >
+
+                <br /><br /><br /><br />
+            </p>
+        </small>
+
+        <!-- DEBUG -->
+
+        <div id="debug" style="display: none">
+            <br /><br /><br /><br /><br />
+
+            <p class="title">Debug Options</p>
+            <br />
+            <hr />
+
+            <br /><br /><br /><br />
+
+            Set difficulty (unrestricted):
+            <input type="number" id="d-diff-input" value="0" /> &nbsp; &nbsp;
+            <a id="d-edit-diff-button" class="submit" href="#submit">SUBMIT</a>
+            &nbsp;&nbsp;&nbsp;
+            <a id="d-edit-diff-reload-button" class="submit" href="#submit"
+                >RELOAD</a
+            ><br /><br />
+            <p id="d-edit-diff-data">-</p>
+
+            <br /><br /><br />
+
+            <button id="ignore-diff-button">Toggle difficulty</button
+            ><br /><br />
+            <p id="ignore-diff-data">-</p>
+
+            <br /><br /><br />
+
+            Set stage level:
+            <input type="number" id="stage-input" value="0" /> &nbsp; &nbsp;
+            <a id="edit-stage-button" class="submit" href="#submit">SUBMIT</a
+            ><br /><br />
+            <p id="set-stage-data">-</p>
+
+            <br /><br /><br />
+
+            <button id="ignore-time-button">Toggle time</button><br /><br />
+            <p id="ignore-time-data">-</p>
+
+            <br /><br /><br />
+
+            Set time of day:
+            <input type="time" id="set-time-input" value="" /> &nbsp; &nbsp;
+            <a id="set-time-button" class="submit" href="#submit">SUBMIT</a
+            ><br /><br />
+            <p id="set-time-data">-</p>
+
+            <br /><br /><br />
+
+            Set time of first login:
+            <input type="time" id="set-time-2-input" value="" /> &nbsp; &nbsp;
+            <a id="set-time-2-button" class="submit" href="#submit">SUBMIT</a
+            ><br /><br />
+            <p id="set-time-2-data">-</p>
+
+            <br /><br /><br />
+
+            Set time of last popup:
+            <input type="time" id="set-time-3-input" /> &nbsp; &nbsp;
+            <a id="set-time-3-button" class="submit" href="#submit">SUBMIT</a
+            ><br /><br />
+            <p id="set-time-3-data">-</p>
+
+            <br /><br /><br />
+
+            <a id="close-debug-button" href="#debug">Close this section</a>
+
+            <br /><br /><br /><br />
+        </div>
+
+        <script src="assets/js/settings.js"></script>
     </div>
-    
-    <script src="assets/js/settings.js"></script>
-
-</div> </body>
-
+</body>
