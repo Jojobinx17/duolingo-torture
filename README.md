@@ -1,6 +1,6 @@
 # Duolingo Torture - Invasive Duolingo Reminders (v1.1)
 
-_This extension should work on any chromium-based browser (Chrome, Edge, Opera, etc)._
+_This extension should work on any chromium-based browser (Chrome, Edge, Opera, etc). Chrome and Edge have been confirmed to work as intended._
 
 To install (chrome):
 
