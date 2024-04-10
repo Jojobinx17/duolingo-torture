@@ -1,63 +1,56 @@
 {
-    "manifest_version": 3,
-    "name": "Duolingo Torture",
-    "description": "Invasive Duolingo Reminders",
-    "version": "1.1",
-    
-    "icons": {
-        "16": "assets/images/icon.png",
-        "32": "assets/images/icon.png",
-        "48": "assets/images/icon.png",
-        "128": "assets/images/icon.png"
+  "manifest_version": 3,
+  "name": "Duolingo Torture",
+  "description": "Invasive Duolingo Reminders",
+  "version": "0.2",
+
+  "icons": {
+    "16": "assets/images/icon.png",
+    "32": "assets/images/icon.png",
+    "48": "assets/images/icon.png",
+    "128": "assets/images/icon.png"
+  },
+
+  "action": {
+    "default_popup": "extension.html",
+    "default_icon": "assets/images/icon.png"
+  },
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "exclude_matches": ["*://*.duolingo.com/lesson"],
+      "js": ["assets/js/runner.js"],
+      "all_frames": false,
+      "match_origin_as_fallback": false,
+      "match_about_blank": false,
+      "run_at": "document_start",
+      "world": "ISOLATED"
+    }
+  ],
+
+  "externally_connectable": {
+    "matches": ["<all_urls>"]
+  },
+
+  "host_permissions": ["<all_urls>"],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/fonts/DINRoundPro-Bold.woff"],
+      "matches": ["https://*/*"]
     },
 
-    "action": {
-        "default_popup": "extension.html",
-        "default_icon": "assets/images/icon.png"
-    },
+    {
+      "resources": ["assets/images/duo-wave.svg"],
+      "matches": ["https://*/*"]
+    }
+  ],
 
-    "background": {
-        "service_worker": "background.js",
-        "type": "module"
-    },
-
-    "content_scripts": [
-        {
-            "matches": [ "<all_urls>" ],
-            "exclude_matches": [ "*://*.duolingo.com/lesson" ],
-            "js": [ "assets/js/runner.js" ],
-            "all_frames": false,
-            "match_origin_as_fallback": false,
-            "match_about_blank": false,
-            "run_at": "document_start",
-            "world": "ISOLATED"
-        }
-    ],
-
-    "externally_connectable": {
-        "matches": ["<all_urls>"]
-    },
-    
-    "host_permissions": ["<all_urls>"],
-
-    "web_accessible_resources": [
-        {
-            "resources": [ "assets/fonts/DINRoundPro-Bold.woff" ],
-            "matches": [ "https://*/*" ]
-        },
-
-        {
-            "resources": [ "assets/images/duo-wave.svg" ],
-            "matches": [ "https://*/*" ]
-        }
-    ],
-
-    "permissions": [
-        "tabs",
-        "activeTab",
-        "storage",
-        "windows",
-        "scripting"
-    ]
+  "permissions": ["tabs", "activeTab", "storage", "windows", "scripting"]
 }
-
