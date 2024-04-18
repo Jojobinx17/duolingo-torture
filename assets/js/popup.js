@@ -76,7 +76,7 @@ async function getDuolingoData() {
     await chrome.storage.local.set({ extended: true });
   } else {
     document.getElementById("data-result").innerHTML =
-      "Complete. Streak not extended.";
+      "Streak not extended.";
 
     // make sure window is always in the foreground
     var setWindowToForeground = setInterval(function () {
