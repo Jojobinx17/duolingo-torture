@@ -67,7 +67,7 @@ async function getDuolingoData() {
 
   if (jsonResponse.streak_extended_today == true) {
     document.getElementById("data-result").innerHTML =
-      "Complete. Streak extended!";
+      "Streak extended!";
 
     document.getElementById("practiced").style.display = "block";
     document.getElementById("not-practiced").style.display = "none";
