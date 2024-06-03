@@ -4,7 +4,6 @@
     - Info in extension popup (streak info) [done]
     - Difficulty information in settings page [done]
     - Costomize practice notifications with the users' current language that they are learning [planned]
-    - Intensity lock option, locks your settings for x days [planned]
 
     This is one of my biggest solo projects, and I am pretty proud of how it turned out.
     I hope you enjoy using it as much as I enjoyed developing it!
@@ -13,7 +12,7 @@
 -->
 
 <head>
-    <title>Duolingo Torture - Settings</title>
+    <title>Settings - Duolingo Torture</title>
 
     <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
@@ -232,23 +231,34 @@
             <p class="title">Debug Options</p>
             <br />
             <p class="small-text">
-                Use at your own risk, I guess... If stuff breaks, just reset
-                your data. These options will be removed upon official release.
+                Use at your own risk, I guess... If everything breaks, just
+                reset your data. These options will be removed upon official
+                release.
             </p>
+
             <br />
             <hr />
-
             <br />
 
             <a id="close-debug-button" href="#debug">Close this section</a>
 
             <br /><br /><br /><br />
 
-            Set difficulty (unrestricted):
+            Set debug verbosity (0/1): &nbsp;
+            <input type="number" id="debug-verbosity-input" value="0" /> &nbsp;
+            &nbsp;
+            <a id="debug-verbosity-button" class="submit" href="#submit"
+                >SUBMIT</a
+            ><br /><br />
+            <p id="debug-verbosity-data">-</p>
+
+            <br /><br /><br />
+
+            Set difficulty (unrestricted): &nbsp;
             <input type="number" id="d-diff-input" value="0" /> &nbsp; &nbsp;
             <a id="d-edit-diff-button" class="submit" href="#submit">SUBMIT</a>
             &nbsp;&nbsp;&nbsp;
-            <a id="d-edit-diff-reload-button" class="submit" href="#submit"
+            <a id="d-edit-diff-reload-button" class="submit" href="#reload"
                 >RELOAD</a
             ><br /><br />
             <p id="d-edit-diff-data">-</p>
@@ -261,7 +271,7 @@
 
             <br /><br /><br />
 
-            Set stage level:
+            Set stage level: &nbsp;
             <input type="number" id="stage-input" value="0" /> &nbsp; &nbsp;
             <a id="edit-stage-button" class="submit" href="#submit">SUBMIT</a
             ><br /><br />
@@ -274,7 +284,7 @@
 
             <br /><br /><br />
 
-            Set time of day:
+            Set time of day: &nbsp;
             <input type="time" id="set-time-input" value="" /> &nbsp; &nbsp;
             <a id="set-time-button" class="submit" href="#submit">SUBMIT</a
             ><br /><br />
@@ -282,7 +292,7 @@
 
             <br /><br /><br />
 
-            Set time of first login:
+            Set time of first login: &nbsp;
             <input type="time" id="set-time-2-input" value="" /> &nbsp; &nbsp;
             <a id="set-time-2-button" class="submit" href="#submit">SUBMIT</a
             ><br /><br />
@@ -290,7 +300,7 @@
 
             <br /><br /><br />
 
-            Set time of last popup:
+            Set time of last popup: &nbsp;
             <input type="time" id="set-time-3-input" /> &nbsp; &nbsp;
             <a id="set-time-3-button" class="submit" href="#submit">SUBMIT</a
             ><br /><br />

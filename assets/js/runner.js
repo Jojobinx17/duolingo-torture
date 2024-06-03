@@ -5,7 +5,8 @@ const timeOfLoad = currentDate.getTime();
 let stageProcessed = false;
 
 async function duolingoMain(data = {}, stageToProcess = 0) {
-  console.log("Running main script (stage " + stageToProcess + ")...");
+  if (debugVerbosity == 1)
+    console.log("Running main script (stage " + stageToProcess + ")...");
 
   if (data.extended != true && data.extended != false) data.extended = false;
 
@@ -14,14 +15,15 @@ async function duolingoMain(data = {}, stageToProcess = 0) {
 
     if (stageToProcess == 0) {
       stageProcessed = true;
-      console.log("Stage zero, ignoring...");
+      if (debugVerbosity == 1) console.log("Stage zero, ignoring...");
     }
 
     // ============================= STAGE 1 =============================
 
     if (stageToProcess == 1) {
       stageProcessed = true;
-      console.log("Stage one, creating small popups...");
+      if (debugVerbosity == 1)
+        console.log("Stage one, creating small popups...");
 
       createInPagePopup(0);
       createInPagePopup(1);
@@ -31,82 +33,88 @@ async function duolingoMain(data = {}, stageToProcess = 0) {
 
     if (stageToProcess == 2) {
       stageProcessed = true;
-      console.log("Stage two, opening popup window...");
+      if (debugVerbosity == 1)
+        console.log("Stage two, opening popup window...");
 
       const response = await chrome.runtime.sendMessage({
         type: "closablePopup",
         url: window.location.href,
       });
-      console.log(response);
+      if (debugVerbosity == 1) console.log(response);
     }
 
     // ============================= STAGE 3 =============================
 
     if (stageToProcess == 3) {
       stageProcessed = true;
-      console.log("Stage three, opening forced popup window...");
+      if (debugVerbosity == 1)
+        console.log("Stage three, opening forced popup window...");
 
       var openUnclosablePopup = setInterval(function () {}, 200);
     }
   } else {
-    console.log("User has completed a lesson today.");
+    if (debugVerbosity == 1) console.log("User has completed a lesson today.");
   }
 
   // ============================= GETTING DUOLINGO DATA =============================
 
-  console.log("Fetching user data from Duolingo API...");
+  if (debugVerbosity == 1)
+    console.log("Fetching user data from Duolingo API...");
 
   const apiResponse = await chrome.runtime.sendMessage({
     type: "getDuolingoUserData",
     username: data.username,
   });
 
-  console.log(
-    "Duolingo API retuned " +
-      apiResponse +
-      ", saved value was " +
-      data.extended +
-      ".",
-  );
+  if (debugVerbosity == 1)
+    console.log(
+      "Duolingo API retuned " +
+        apiResponse +
+        ", saved value was " +
+        data.extended +
+        ".",
+    );
 
   if (apiResponse != data.extended) {
-    console.log("Saved completion data was incorrect, updating...");
+    if (debugVerbosity == 1)
+      console.log("Saved completion data was incorrect, updating...");
 
     // stage 0
     if (data.state == 0 && apiResponse == false) {
-      console.log("Stage is zero.");
+      if (debugVerbosity == 1) console.log("Stage is zero.");
     }
 
     // stage 1
     if (data.state == 1 && apiResponse == true) {
       document.getElementById("duo-sees-you-0").remove();
       document.getElementById("duo-sees-you-1").remove();
-      console.log("In-page popups removed.");
+      if (debugVerbosity == 1) console.log("In-page popups removed.");
     }
 
     if (data.state == 1 && apiResponse == false) {
       createInPagePopup(0);
       createInPagePopup(1);
-      console.log("In-page popups created.");
+      if (debugVerbosity == 1) console.log("In-page popups created.");
     }
 
     if (data.state == 2 && apiResponse == false) {
-      console.log("Closable popup created.");
+      if (debugVerbosity == 1) console.log("Closable popup created.");
     }
 
     if (data.state == 3 && apiResponse == false) {
-      console.log("Attempting to open unclosable popup...");
+      if (debugVerbosity == 1)
+        console.log("Attempting to open unclosable popup...");
       var openUnclosablePopup = setInterval(function () {}, 200);
     }
 
     // update the local storage to reflect the proper value
     await chrome.storage.local.set({ extended: apiResponse });
-    console.log("Saved completion data updated.");
+    if (debugVerbosity == 1) console.log("Saved completion data updated.");
   } else {
-    console.log("Saved completion data was correct.");
+    if (debugVerbosity == 1) console.log("Saved completion data was correct.");
   }
 
-  console.log("Main script finished.");
+  if (debugVerbosity == 1) console.log("Main script finished.");
   return true;
 }
 
@@ -171,6 +179,8 @@ function createInPagePopup(type) {
 async function duolingoInit(data) {
   console.log("Waking up Duo...");
 
+  let debugVerbosity = data.debugVerbosity;
+
   let diffProcessed = false;
 
   let d = new Date(data.time);
@@ -181,13 +191,15 @@ async function duolingoInit(data) {
 
   if (storedTime2.getDate() != d.getDate()) {
     chrome.storage.local.set({ time2: d.getTime() }).then(function () {
-      console.log(
-        "Timer 2 has been set to " +
-          d.getTime() +
-          " (Date number " +
-          d.getDate() +
-          ").",
-      );
+      if (debugVerbosity == 1) {
+        console.log(
+          "Timer 2 has been set to " +
+            d.getTime() +
+            " (Date number " +
+            d.getDate() +
+            ").",
+        );
+      }
     });
   }
 
@@ -205,15 +217,17 @@ async function duolingoInit(data) {
   const currentDifficulty = data.difficulty;
 
   // debug stuff
-  console.log("");
-  console.log("Current difficulty:", currentDifficulty);
-  console.log("Current username:", data.username);
-  console.log("Currently learning:", data.language);
-  console.log("Hours since first login:", hoursSinceFirstLoginToday);
-  console.log("Current hour:", d.getHours());
-  console.log("Minutes since last popup:", minutesSinceLastPopup);
-  console.log("Ignoring difficulty:", data.ignoreDifficulty);
-  console.log("");
+  if (debugVerbosity == 1) {
+    console.log("");
+    console.log("Current difficulty:", currentDifficulty);
+    console.log("Current username:", data.username);
+    console.log("Currently learning:", data.language);
+    console.log("Hours since first login:", hoursSinceFirstLoginToday);
+    console.log("Current hour:", d.getHours());
+    console.log("Minutes since last popup:", minutesSinceLastPopup);
+    console.log("Ignoring difficulty:", data.ignoreDifficulty);
+    console.log("");
+  }
 
   if (data.username.trim() != "") {
     // easy difficulty
@@ -226,31 +240,36 @@ async function duolingoInit(data) {
 
       if (data.ignoreDifficulty == false && minutesSinceLastPopup > 10) {
         if (hoursSinceFirstLoginToday >= 3) {
-          console.log(
-            "Difficulty zero (easy) has passed its checks - more than three hours since first login.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty zero (easy) has passed its checks - more than three hours since first login.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 1);
         } else if (d.getHours() >= 13) {
-          console.log(
-            "Difficulty zero (easy) has passed its checks - past 1:00pm.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty zero (easy) has passed its checks - past 1:00pm.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 1);
         } else {
-          console.log(
-            "Difficulty zero (easy) has failed its checks - Requirements to create popup not met.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty zero (easy) has failed its checks - Requirements to create popup not met.",
+            );
         }
       } else {
         if (minutesSinceLastPopup <= 10) {
-          console.log(
-            "Difficulty zero (easy) has failed its checks - Minutes passed is less than 10.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty zero (easy) has failed its checks - Minutes passed is less than 10.",
+            );
         } else {
-          console.log(
-            "Difficulty zero (easy) has failed its checks - Ignoring difficulty.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty zero (easy) has failed its checks - Ignoring difficulty.",
+            );
         }
       }
     }
@@ -265,33 +284,38 @@ async function duolingoInit(data) {
 
       if (data.ignoreDifficulty == false && minutesSinceLastPopup > 10) {
         if (hoursSinceFirstLoginToday >= 3) {
-          console.log(
-            "Difficulty one (normal) has passed its checks - more than 3 hours since first login.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty one (normal) has passed its checks - more than 3 hours since first login.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 2);
         } else if (d.getHours() >= 13) {
-          console.log(
-            "Difficulty one (normal) has passed its checks - past 1:00pm.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty one (normal) has passed its checks - past 1:00pm.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 2);
         } else {
-          console.log(
-            "Difficulty one (normal) has passed its checks - default.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty one (normal) has passed its checks - default.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 1);
         }
       } else {
         if (minutesSinceLastPopup <= 10) {
-          console.log(
-            "Difficulty one (normal) has failed its checks - Minutes passed is less than 10.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty one (normal) has failed its checks - Minutes passed is less than 10.",
+            );
         } else {
-          console.log(
-            "Difficulty one (normal) has failed its checks - Ignoring difficulty.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty one (normal) has failed its checks - Ignoring difficulty.",
+            );
         }
       }
     }
@@ -307,43 +331,52 @@ async function duolingoInit(data) {
 
       if (data.ignoreDifficulty == false && minutesSinceLastPopup > 5) {
         if (hoursSinceFirstLoginToday >= 3) {
-          console.log(
-            "Difficulty two (hard) has passed its checks - more than 3 hours since first login.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has passed its checks - more than 3 hours since first login.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 3);
         } else if (hoursSinceFirstLoginToday >= 1) {
-          console.log(
-            "Difficulty two (hard) has passed its checks - more than 1 hour since first login.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has passed its checks - more than 1 hour since first login.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 2);
         } else if (d.getHours() >= 14) {
-          console.log(
-            "Difficulty two (hard) has passed its checks - past 2:00pm.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has passed its checks - past 2:00pm.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 3);
         } else if (d.getHours() >= 11) {
-          console.log(
-            "Difficulty two (hard) has passed its checks - past 11:00am.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has passed its checks - past 11:00am.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 2);
         } else {
-          console.log("Difficulty two (hard) has passed its checks - default.");
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has passed its checks - default.",
+            );
           resetTimers(data.ignoreTime);
           await duolingoMain(data, 1);
         }
       } else {
         if (minutesSinceLastPopup <= 5) {
-          console.log(
-            "Difficulty two (hard) has failed its checks - Minutes passed is less than 5.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has failed its checks - Minutes passed is less than 5.",
+            );
         } else {
-          console.log(
-            "Difficulty two (hard) has failed its checks - Ignoring difficulty.",
-          );
+          if (debugVerbosity == 1)
+            console.log(
+              "Difficulty two (hard) has failed its checks - Ignoring difficulty.",
+            );
         }
       }
     }
@@ -352,8 +385,9 @@ async function duolingoInit(data) {
       // TORTURE DIFFICULTY REQUIREMENTS
       // None, just run whenever it can
 
-      diffProcessed == false;
-      console.log("Difficulty three (torture) is running...");
+      diffProcessed == true;
+      if (debugVerbosity == 1)
+        console.log("Difficulty three (torture) is running...");
 
       // we don't need to reset anything here
       await duolingoMain(data, 3);
@@ -361,18 +395,22 @@ async function duolingoInit(data) {
 
     // do stuff if ignoring difficulty
     if (data.ignoreDifficulty == true) {
-      console.log(
-        "Ignoring difficulty. Using stage value (" + data.state + ") instead.",
-      );
+      if (debugVerbosity == 1)
+        console.log(
+          "Ignoring difficulty. Using stage value (" +
+            data.state +
+            ") instead.",
+        );
       await duolingoMain(data, data.state);
     }
 
     // set values is they are undefined somehow
     if (diffProcessed == false) {
       chrome.storage.local.set({ difficulty: 1 });
-      console.log(
-        "Difficulty had a bad value, and has been defaulted to normal.",
-      );
+      if (debugVerbosity == 1)
+        console.log(
+          "Difficulty had a bad value, and has been defaulted to normal.",
+        );
     }
   } else {
     console.error("Doulingo Torture Error: Invalid username.");
@@ -389,11 +427,11 @@ async function resetTimers(ignoreTime) {
   const d = new Date();
 
   if (ignoreTime == false) {
-    console.log("Updating timers...");
+    if (debugVerbosity == 1) console.log("Updating timers...");
     await chrome.storage.local.set({ time3: d.getTime() });
-    console.log("Done.");
+    if (debugVerbosity == 1) console.log("Done.");
   } else {
-    console.log("Ignoring timers.");
+    if (debugVerbosity == 1) console.log("Ignoring timers.");
   }
 }
 

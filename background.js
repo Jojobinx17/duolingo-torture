@@ -23,6 +23,9 @@ chrome.runtime.onInstalled.addListener(function (object) {
     chrome.storage.local.set({ difficulty: 1 }).then(() => {
       console.log("Difficulty has been set to one.");
     });
+    chrome.storage.local.set({ debugVerbosity: 0 }).then(() => {
+      console.log("Debug verbosity has been set to 0.");
+    });
     chrome.storage.local.set({ ignoreDifficulty: false }).then(() => {
       console.log("Not ignoring difficulty.");
     });
