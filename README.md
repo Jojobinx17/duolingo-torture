@@ -5,8 +5,7 @@ Firefox is not supported at this time._
 
 ### To install (chrome):
 
-- Download the extension <a href="https://jojobinx.com/download.html#duolingo-torture" target="_blank">here</a>
- and extract (unzip) it.
+- Download the extension [here](https://jojobinx.com/download.html#duolingo-torture) and extract (unzip) it.
 - Go to 'chrome://extensions' on Google Chrome.
 - In the top right, turn on 'Developer mode'. You can turn this off once you load the extension.
 - Now, on the top left, select 'Load unpacked'. Select the folder on your computer containing the code from this repository.
